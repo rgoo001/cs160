@@ -287,7 +287,6 @@ void sigint_handler(int sig)
 void sigtstp_handler(int sig) 
 {
     printf("ctrl-Z pressed. SIGSTOP activated\n");
-    return;
 }
 
 /*********************
