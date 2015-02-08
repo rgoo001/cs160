@@ -2,6 +2,7 @@
  * tsh - A tiny shell program with job control
  * 
  * <Put your name and ID here>
+ * Ryan Goo  860984290
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -263,6 +264,7 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig) 
 {
+    printf(" SIGCHILD activated\n");
     return;
 }
 
@@ -273,7 +275,8 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig) 
 {
-    return;
+    printf("ctrl-C pressed. SIGINT activated\n");
+    exit(0);
 }
 
 /*
@@ -283,6 +286,7 @@ void sigint_handler(int sig)
  */
 void sigtstp_handler(int sig) 
 {
+    printf("ctrl-Z pressed. SIGSTOP activated\n");
     return;
 }
 
