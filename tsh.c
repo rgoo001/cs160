@@ -177,6 +177,10 @@ void eval(char *cmdline,char **argv)
     *       run exe file of child process(job)
     *
     */
+    printf("evals input[0]: %s\n", argv[0]);
+    printf("evals input[1]: %s\n", argv[1]);
+    printf("evalc input[0]: %c\n", argv[0]);
+    printf("evalc input[1]: %c\n", argv[1]);
     if (builtin_cmd(argv));
     else
     {
