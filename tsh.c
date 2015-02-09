@@ -177,8 +177,7 @@ void eval(char *cmdline)
     *       run exe file of child process(job)
     *
     */
-    string check = argv[0];
-    if (builtin_cmd(check));
+    if (builtin_cmd(argv));
     else
     {
         printf("not built in job");
