@@ -212,30 +212,24 @@ void eval(char *cmdline)
                 addjob(jobs,pid,BG,cmdline);
             }
                 //have to wait for FG to terminate
-             if(!bgfg) waitfg(pid);
-             else printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
-         }
- /*
-            struct job_t *jobf;
-            //delete job when done
-            jobf = getjobpid(jobs, pid);
-            if (jobf == NULL)
-            {
-                if (jobf->state != ST)
+            if(!bgfg)
+             {
+                waitfg(pid);
+
+                struct job_t *jobf;
+                //delete job when done
+                jobf = getjobpid(jobs, pid);
+                if (jobf == NULL)
                 {
-                    kill(pid, SIGKILL);
-                    deletejob(jobs, pid);                  
+                    if (jobf->state != ST)
+                    {
+                        kill(pid, SIGKILL);
+                        deletejob(jobs, pid);                  
+                    }
                 }
-            }
-    
-       
-        else
-        {
-            printf("background\n");
-            addjob(jobs,pid,BG,cmdline);
-            jobf = getjobpid(jobs,pid)
-            printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
-        }*/
+             } 
+             else printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
+         } //else :202
     }
 
 }
