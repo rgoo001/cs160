@@ -188,16 +188,42 @@ void eval(char *cmdline)
     
     if (builtin == 0)
     {
+        //fork and let child run job
+        if ((pid = fork()) == 0)
+        {
+            setpgid(0,0);
+            if (execvp(argv[0], argv) < 0)
+            {
+                printf("Command not found: %s", argv[0]);
+                exit(0);
+            }
+        } 
+
+
+
         if (bgfg == 0)
         {
             printf("foreground job\n");
-            //check if is built in, run directly
+            addjob(jobs,pid,FG,cmdline);
 
+            //have to wait for FG to terminate
+            waitfg(pid);
+
+            //delete job when done
+            jobf = getjobpid(jobs, pid);
+            if (jobf == NULL || jobf->state == ST);
+            else 
+            {
+                kill(pid, SIGKILL);
+                deletejob(jobs, pid);
+            }
         }
         else
         {
             printf("background\n");
-            //check if it is built in, fork & run
+            addjob(jobs,pid,BG,cmdline);
+
+            printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
         }
     }
 
@@ -269,7 +295,7 @@ int builtin_cmd(char **argv)
 {
     //quit
     if (!strcmp(argv[0], "quit")) exit(0);
-    
+
     //& as first char is ignore
     else if (!strcmp(argv[0], "&")) return 1;
 
@@ -354,10 +380,12 @@ void sigint_handler(int sig)
     struct job_t *jobf;
     jobf=getjobpid(jobs, pid);
 
+    int jid = pid2jid(pid);
+
     if (pid != 0)
     {
         //if job is found, kill process then delete
-        printf("killing job: (%d)(%d)\n", jobf->jid, pid);
+        printf("killing job: [%d](%d)\n", jobf->jid, pid);
         kill(-pid, SIGINT);
         if (sig<0) deletejob(jobs,pid);
     }
@@ -377,11 +405,13 @@ void sigtstp_handler(int sig)
     struct job_t *jobf;
     jobf = getjobpid(jobs,pid);
 
+    int jid = pid2jid(pid);
+
     //if pids has a finds a process
     if (pid != 0)
     {
         //kill process and change job status to "stopped"
-        printf("stopping job: (%d)(%d)\n", jobf>jid, pid);
+        printf("stopping job: [%d](%d)\n", jobf>jid, pid);
         jobf->state=ST;
         kill(-pid, SIGTSTP);
 
