@@ -185,17 +185,17 @@ void eval(char *cmdline)
     pid_t pid;
     int bgfg = parseline(cmdline,argv);
 
-    printf("188 check: %i", i++);
+    printf("188 check: \n");
 
     //check for built in commands, return 0 (donothing) if not command. 
     if (!builtin_cmd(argv))
     {
-        printf("193 fork1: %i", i++);
+        printf("193 fork1: \n");
 
         //fork and let child run job
         if ((pid = fork()) == 0)
         {
-            printf("198 fork2 enterchild: %i", i++);
+            printf("198 fork2 enterchild: \n");
 
             setpgid(0,0);
             if (execvp(argv[0], argv) < 0)
@@ -203,7 +203,7 @@ void eval(char *cmdline)
                 printf("Command not found: %s", argv[0]);
                 exit(0);
             }
-            printf("206 fork3 after exec: %i", i++);
+            printf("206 fork3 after exec: \n");
 
         } 
 
@@ -211,16 +211,16 @@ void eval(char *cmdline)
         //parent waits for FG to end
         else
         {
-            printf("214 check enter parent: %i", i++);
+            printf("214 check enter parent: \n");
             if (!bgfg)
             {
                 printf("foreground job\n");
                 addjob(jobs,pid,FG,cmdline);
-                printf("219 check !bgfg: %i", i++);
+                printf("219 check !bgfg: \n");
             }
             else
             {
-                printf("223 check !bgfg else: %i", i++);
+                printf("223 check !bgfg else: \n");
                 printf("background\n");
                 addjob(jobs,pid,BG,cmdline);
             }
@@ -229,11 +229,11 @@ void eval(char *cmdline)
              {
 
                 waitfg(pid);
-                printf(" 232 check afer waitfg: %i", i++);
+                printf(" 232 check afer waitfg: \n");
                 struct job_t *jobf;
                 //delete job when done
                 jobf = getjobpid(jobs, pid);
-                printf(" 236 after delete: %i", i++);
+                printf(" 236 after delete: \n");
                 if (jobf == NULL)
                 {
                     if (jobf->state != ST)
