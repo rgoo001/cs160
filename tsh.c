@@ -179,7 +179,6 @@ void eval(char *cmdline)
     *       argv == path of exe file
     *       run exe file of child process(job)
     */
-    int i = 0;
 
     char * argv[MAXARGS];
     pid_t pid;
@@ -197,13 +196,13 @@ void eval(char *cmdline)
         {
             printf("198 fork2 enterchild: \n");
 
-            setpgid(0,0);
+            setpgid(0,0); ///////////////////////////////////////////
+            printf(" 200 after setpgid: \n");
             if (execvp(argv[0], argv) < 0)
             {
-                printf("Command not found: %s", argv[0]);
+                printf("Command not found: %s\n", argv[0]);
                 exit(0);
             }
-            printf("206 fork3 after exec: \n");
 
         } 
 
@@ -233,7 +232,7 @@ void eval(char *cmdline)
                 struct job_t *jobf;
                 //delete job when done
                 jobf = getjobpid(jobs, pid);
-                printf(" 236 after delete: \n");
+                
                 if (jobf == NULL)
                 {
                     if (jobf->state != ST)
@@ -242,9 +241,10 @@ void eval(char *cmdline)
                         deletejob(jobs, pid);                  
                     }
                 }
+                printf(" 236 after delete: \n");
              } 
-             else printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
-
+             else //printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
+             printf(" 247 after delete: \n");
          } //else :202
     }
 
