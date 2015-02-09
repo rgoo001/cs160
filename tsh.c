@@ -145,7 +145,7 @@ int main(int argc, char **argv)
 	}
 
 	/* Evaluate the command line */
-	eval(cmdline,char **argv);
+	eval(cmdline,argv);
 	fflush(stdout);
 	fflush(stdout);
     } 
@@ -251,10 +251,9 @@ int builtin_cmd(char **argv)
 {
     printf("entering builtin_cmd");
 
-    string check = argv[0];
-    if (check == "quit"||check == "jobs"||check == "bg"||check =="fg")
+    if (argv[0] == "quit"||check == "jobs"||argv[0] == "bg"||argv[0] =="fg")
     {
-        printf("input: %s", check);
+        printf("input: %s", argv[0]);
     }
     else
     return 0;     /* not a builtin command */
