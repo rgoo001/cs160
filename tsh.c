@@ -56,7 +56,7 @@ struct job_t jobs[MAXJOBS]; /* The job list */
 /* Function prototypes */
 
 /* Here are the functions that you will implement */
-void eval(char *cmdline,char **argv);
+void eval(char *cmdline);
 int builtin_cmd(char **argv);
 void do_bgfg(char **argv);
 void waitfg(pid_t pid);
@@ -145,11 +145,10 @@ int main(int argc, char **argv)
 	}
 
 	/* Evaluate the command line */
-    printf("main input[0]: %s\n", argv[0]);
-    printf("main input[1]: %s\n", argv[1]);
+    printf("cmdline: %s\n", cmdline);
 
 
-	eval(cmdline,argv);
+	eval(cmdline);
 	fflush(stdout);
 	fflush(stdout);
     } 
@@ -168,7 +167,7 @@ int main(int argc, char **argv)
  * background children don't receive SIGINT (SIGTSTP) from the kernel
  * when we type ctrl-c (ctrl-z) at the keyboard.  
 */
-void eval(char *cmdline,char **argv) 
+void eval(char *cmdline) 
 {
     /*
     * built in cmd?
@@ -179,13 +178,9 @@ void eval(char *cmdline,char **argv)
     *     if no
     *       argv == path of exe file
     *       run exe file of child process(job)
-    *
+    */
 
-    printf("evals input[0]: %s\n", argv[0]);
-    printf("evals input[1]: %s\n", argv[1]);
-    printf("evalc input[0]: %c\n", argv[0]);
-    printf("evalc input[1]: %c\n", argv[1]);    */
-    if (builtin_cmd(argv));
+    if (builtin_cmd(cmdline));
     else
     {
         printf("not built in job\n");
@@ -257,14 +252,9 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
-    printf("entering builtin_cmd\n");
-    printf("argv[0] == %s\n", argv[1]); //argv[0] == tsh
-    if (argv[1] == "quit"||argv[1] == "jobs"||argv[1] == "bg"||argv[1] =="fg")
-    {
-        printf("input: %s", argv[1]);
-        return 1;
-    }
-    else
+    printf("cmdline[0]: %s\n", argv[0]);
+    printf("cmdline[1]: %s\n", argv[1]);
+    
     return 0;     /* not a builtin command */
 }
 
