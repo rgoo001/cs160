@@ -349,9 +349,9 @@ void do_bgfg(char **argv)
     else if (tempid[0] == "%") //check if job
     {
         temp = atoi(&tempid[1]);
-        if(! (job=getjobjid(jobs, jid)))
+        if(! (job=getjobjid(jobs, temp)))
         {
-            printf("(%d) Job does not exist\n", tempid);
+            printf("(%s) Job does not exist\n", tempid);
             return;
         }
     }
