@@ -179,8 +179,8 @@ void eval(char *cmdline)
     *       argv == path of exe file
     *       run exe file of child process(job)
     */
-    char * argv[];
-    if (parseline(cmdline,argv) == false)
+    char * argv[MAXARGS];
+    if (parseline(cmdline,argv) == 0)
     {
         printf("foreground job\n");
 
