@@ -180,7 +180,7 @@ void eval(char *cmdline,char **argv)
     if (builtin_cmd(argv));
     else
     {
-        printf("not built in job");
+        printf("not built in job\n");
     }
 
     return;
@@ -249,11 +249,12 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
-    printf("entering builtin_cmd");
-
+    printf("entering builtin_cmd\n");
+    printf("argv[0] == %s\n", argv[0]);
     if (argv[0] == "quit"||argv[0] == "jobs"||argv[0] == "bg"||argv[0] =="fg")
     {
         printf("input: %s", argv[0]);
+        return 1;
     }
     else
     return 0;     /* not a builtin command */
