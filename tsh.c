@@ -145,6 +145,10 @@ int main(int argc, char **argv)
 	}
 
 	/* Evaluate the command line */
+    printf("main input[0]: %s\n", argv[0]);
+    printf("main input[1]: %s\n", argv[1]);
+
+
 	eval(cmdline,argv);
 	fflush(stdout);
 	fflush(stdout);
@@ -176,11 +180,11 @@ void eval(char *cmdline,char **argv)
     *       argv == path of exe file
     *       run exe file of child process(job)
     *
-    */
+
     printf("evals input[0]: %s\n", argv[0]);
     printf("evals input[1]: %s\n", argv[1]);
     printf("evalc input[0]: %c\n", argv[0]);
-    printf("evalc input[1]: %c\n", argv[1]);
+    printf("evalc input[1]: %c\n", argv[1]);    */
     if (builtin_cmd(argv));
     else
     {
