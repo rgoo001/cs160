@@ -56,7 +56,7 @@ struct job_t jobs[MAXJOBS]; /* The job list */
 /* Function prototypes */
 
 /* Here are the functions that you will implement */
-void eval(char *cmdline);
+void eval(char *cmdline,char **argv);
 int builtin_cmd(char **argv);
 void do_bgfg(char **argv);
 void waitfg(pid_t pid);
@@ -145,7 +145,7 @@ int main(int argc, char **argv)
 	}
 
 	/* Evaluate the command line */
-	eval(cmdline);
+	eval(cmdline,char **argv);
 	fflush(stdout);
 	fflush(stdout);
     } 
@@ -164,7 +164,7 @@ int main(int argc, char **argv)
  * background children don't receive SIGINT (SIGTSTP) from the kernel
  * when we type ctrl-c (ctrl-z) at the keyboard.  
 */
-void eval(char *cmdline) 
+void eval(char *cmdline,char **argv) 
 {
     /*
     * built in cmd?
