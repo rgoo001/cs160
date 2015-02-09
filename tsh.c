@@ -212,12 +212,15 @@ void eval(char *cmdline)
 
             //delete job when done
             jobf = getjobpid(jobs, pid);
-            if (jobf == NULL || jobf->state == ST);
-            else 
+            if (jobf == NULL)
             {
-                kill(pid, SIGKILL);
-                deletejob(jobs, pid);
+                if (jobf->state != ST)
+                {
+                    kill(pid, SIGKILL);
+                    deletejob(jobs, pid);                  
+                }
             }
+    
         }
         else
         {
@@ -329,7 +332,53 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv) 
 {
-    return;
+    struct job_t *job;
+    char * tempid = argv[1];
+    int temp;
+
+    if (isdigit(tempid[0])) //check if it is a process
+    {
+        pid_t pid = atoi(tempid);
+
+        if(!(job= getjobpid(jobs, pid)))
+        {
+            printf("(%d) Process does not exist\n",pid);
+            return;
+        }
+    }
+    else if (tempid[0] == "%") //check if job
+    {
+        temp = atoi(&tempid[1]);
+        if(! (job=getjobjid(jobs, jid)))
+        {
+            printf("(%d) Job does not exist\n", tempid);
+            return;
+        }
+    }
+    else //invalid job or process entry
+    {
+        printf("Invalid PID/jobid: %s\n", argv[0]);
+        return;
+    }
+    //check if bg/fg 
+    //set state otherwise print error
+
+    if(!strcmp(argv[0], "bg"))
+    {
+        printf("[%d] (%d) %s", job->jid, job->pid, job->cmdline);
+        kill(job->pid, SIGCONT);
+        job->state=BG;
+    }
+    else if (!strcmp(argv[0], "fg"))
+    {
+        if(job != NULL)
+        {
+            waitfg(job->pid);
+            kill(job->pid, SIGCONT);
+            if (job->state != ST)
+                deletejob(jobs, job->pid);
+        }
+    }
 }
 
 /* 
@@ -337,7 +386,8 @@ void do_bgfg(char **argv)
  */
 void waitfg(pid_t pid)
 {
-    return;
+    //waiting until process is no longer foreground
+    while (pid == fgpid(jobs)) sleep(0);
 }
 
 /*****************
