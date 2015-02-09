@@ -62,8 +62,8 @@ void do_bgfg(char **argv);
 void waitfg(pid_t pid);
 
 void sigchld_handler(int sig);
-void sigtstp_handler(int sig);
-void sigint_handler(int sig);
+void sigtstp_handler(int sig); //done
+void sigint_handler(int sig); //done
 
 /* Here are helper routines that we've provided for you */
 int parseline(const char *cmdline, char **argv); 
@@ -166,6 +166,24 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
+    /*
+    * built in cmd?
+    *    if yes
+    *       bg/fg?
+    *           fg - run it
+    *           bg - fork and run
+    *     if no
+    *       argv == path of exe file
+    *       run exe file of child process(job)
+    *
+    */
+    string check = argv[0];
+    if (builtin_cmd(check));
+    else
+    {
+        printf("not built in job");
+    }
+
     return;
 }
 
@@ -232,6 +250,14 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
+    printf("entering builtin_cmd");
+
+    string check = argv[0];
+    if (check == "quit"||check == "jobs"||check == "bg"||check =="fg")
+    {
+        printf("input: %s", check);
+    }
+    else
     return 0;     /* not a builtin command */
 }
 
