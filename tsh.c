@@ -250,10 +250,10 @@ int parseline(const char *cmdline, char **argv)
 int builtin_cmd(char **argv) 
 {
     printf("entering builtin_cmd\n");
-    printf("argv[0] == %s\n", argv[0]);
-    if (argv[0] == "quit"||argv[0] == "jobs"||argv[0] == "bg"||argv[0] =="fg")
+    printf("argv[0] == %s\n", argv[1]); //argv[0] == tsh
+    if (argv[1] == "quit"||argv[1] == "jobs"||argv[1] == "bg"||argv[1] =="fg")
     {
-        printf("input: %s", argv[0]);
+        printf("input: %s", argv[1]);
         return 1;
     }
     else
