@@ -179,46 +179,61 @@ void eval(char *cmdline)
     *       argv == path of exe file
     *       run exe file of child process(job)
     */
+    int i = 0;
+
     char * argv[MAXARGS];
     pid_t pid;
     int bgfg = parseline(cmdline,argv);
 
+    printf("188 check: %i", i++);
+
     //check for built in commands, return 0 (donothing) if not command. 
     if (!builtin_cmd(argv))
     {
+        printf("193 fork1: %i", i++);
+
         //fork and let child run job
         if ((pid = fork()) == 0)
         {
+            printf("198 fork2 enterchild: %i", i++);
+
             setpgid(0,0);
             if (execvp(argv[0], argv) < 0)
             {
                 printf("Command not found: %s", argv[0]);
                 exit(0);
             }
+            printf("206 fork3 after exec: %i", i++);
+
         } 
 
         
         //parent waits for FG to end
         else
         {
+            printf("214 check enter parent: %i", i++);
             if (!bgfg)
             {
                 printf("foreground job\n");
                 addjob(jobs,pid,FG,cmdline);
+                printf("219 check !bgfg: %i", i++);
             }
             else
             {
-                            printf("background\n");
+                printf("223 check !bgfg else: %i", i++);
+                printf("background\n");
                 addjob(jobs,pid,BG,cmdline);
             }
                 //have to wait for FG to terminate
             if(!bgfg)
              {
-                waitfg(pid);
 
+                waitfg(pid);
+                printf(" 232 check afer waitfg: %i", i++);
                 struct job_t *jobf;
                 //delete job when done
                 jobf = getjobpid(jobs, pid);
+                printf(" 236 after delete: %i", i++);
                 if (jobf == NULL)
                 {
                     if (jobf->state != ST)
@@ -229,6 +244,7 @@ void eval(char *cmdline)
                 }
              } 
              else printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
+
          } //else :202
     }
 
