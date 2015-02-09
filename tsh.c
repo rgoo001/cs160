@@ -183,43 +183,45 @@ void eval(char *cmdline)
     char * argv[MAXARGS];
     pid_t pid;
     int bgfg = parseline(cmdline,argv);
-
-    printf("188 check: \n");
+    int i=0;
+    int j = 0;
+    printf("parent: %i\n", i++);
 
     //check for built in commands, return 0 (donothing) if not command. 
     if (!builtin_cmd(argv))
     {
-        printf("193 fork1: \n");
+        printf("parent: %i\n", i++);
 
         //fork and let child run job
         if ((pid = fork()) == 0)
         {
-            printf("198 fork2 enterchild: \n");
+            printf("child: %i\n", j++);
 
             setpgid(0,0); ///////////////////////////////////////////
-            printf(" 200 after setpgid: \n");
+            printf("child: %i\n", j++);
             if (execvp(argv[0], argv) < 0)
             {
+                printf("child: %i\n", j++);
                 printf("Command not found: %s\n", argv[0]);
                 exit(0);
             }
 
         } 
 
-        
+        printf("parent: %i\n", i++);
         //parent waits for FG to end
         else
         {
-            printf("214 check enter parent: \n");
+            printf("parent: %i\n", i++);
             if (!bgfg)
             {
                 printf("foreground job\n");
                 addjob(jobs,pid,FG,cmdline);
-                printf("219 check !bgfg: \n");
+                printf("parent: %i\n", i++);
             }
             else
             {
-                printf("223 check !bgfg else: \n");
+                printf("parent: %i\n", i++);
                 printf("background\n");
                 addjob(jobs,pid,BG,cmdline);
             }
@@ -228,24 +230,27 @@ void eval(char *cmdline)
              {
 
                 waitfg(pid);
-                printf(" 232 check afer waitfg: \n");
+                printf("parent: %i\n", i++);
                 struct job_t *jobf;
                 //delete job when done
                 jobf = getjobpid(jobs, pid);
-                
+                printf("parent: %i\n", i++);
                 if (jobf == NULL)
                 {
+                    printf("parent: %i\n", i++);
                     if (jobf->state != ST)
                     {
                         kill(pid, SIGKILL);
-                        deletejob(jobs, pid);                  
+                        printf("parent: %i\n", i++);
+                        deletejob(jobs, pid); 
+                        printf("parent: %i\n", i++);                 
                     }
                 }
-                printf(" 236 after delete: \n");
+                printf("parent: %i\n", i++);
              } 
              else //printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
-             printf(" 247 after delete: \n");
-         } //else :202
+             printf("parent: %i\n", i++);
+         } 
     }
 
 }
