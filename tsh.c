@@ -208,7 +208,7 @@ void eval(char *cmdline)
 
         } 
 
-        printf("parent: %i\n", i++);
+       
         //parent waits for FG to end
         else
         {
