@@ -239,14 +239,15 @@ int parseline(const char *cmdline, char **argv)
 	}
     }
     argv[argc] = NULL;
-    
+    printf("argc=%i\n", argc);
     if (argc == 0)  /* ignore blank line */
 	return 1;
-
+   printf("did not return");
     /* should the job run in the background? */
     if ((bg = (*argv[argc-1] == '&')) != 0) {
 	argv[--argc] = NULL;
     }
+       printf("bg=%i\n", bg);
     return bg;
 }
 
