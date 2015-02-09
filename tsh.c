@@ -183,11 +183,8 @@ void eval(char *cmdline)
     pid_t pid;
     int bgfg = parseline(cmdline,argv);
 
-    //check for built in commands, return 0 (donothing) if not command.
-    int builtin = builtin_cmd(argv);
-
-    
-    if (builtin == 0)
+    //check for built in commands, return 0 (donothing) if not command. 
+    if (!builtin_cmd(argv))
     {
         //fork and let child run job
         if ((pid = fork()) == 0)
@@ -200,16 +197,26 @@ void eval(char *cmdline)
             }
         } 
 
-        struct job_t *jobf;
+        
         //parent waits for FG to end
-        if (bgfg == 0)
+        else
         {
-            printf("foreground job\n");
-            addjob(jobs,pid,FG,cmdline);
-
-            //have to wait for FG to terminate
-            waitfg(pid);
-
+            if (!bgfg)
+            {
+                printf("foreground job\n");
+                addjob(jobs,pid,FG,cmdline);
+            }
+            else
+            {
+                            printf("background\n");
+                addjob(jobs,pid,BG,cmdline);
+            }
+                //have to wait for FG to terminate
+             if(!bgfg) waitfg(pid);
+             else printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
+         }
+ /*
+            struct job_t *jobf;
             //delete job when done
             jobf = getjobpid(jobs, pid);
             if (jobf == NULL)
@@ -221,18 +228,16 @@ void eval(char *cmdline)
                 }
             }
     
-        }
+       
         else
         {
             printf("background\n");
             addjob(jobs,pid,BG,cmdline);
-            jobf = getjobpid(jobs, pid);
+            jobf = getjobpid(jobs,pid)
             printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
-        }
+        }*/
     }
 
-
-    return;
 }
 
 /* 
