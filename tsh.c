@@ -253,8 +253,7 @@ int parseline(const char *cmdline, char **argv)
 int builtin_cmd(char **argv) 
 {
     printf("cmdline[0]: %s\n", argv[0]);
-    printf("cmdline[1]: %s\n", argv[1]);
-    
+    if (parseline(cmdline,cmdline)) printf("hello?\n");
     return 0;     /* not a builtin command */
 }
 
