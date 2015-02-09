@@ -145,7 +145,7 @@ int main(int argc, char **argv)
 	}
 
 	/* Evaluate the command line */
-    printf("cmdline: %s\n", cmdline);
+    //printf("cmdline: %s\n", cmdline);
 
 
 	eval(cmdline);
@@ -201,7 +201,7 @@ void eval(char *cmdline)
         } 
 
         struct job_t *jobf;
-
+        //parent waits for FG to end
         if (bgfg == 0)
         {
             printf("foreground job\n");
@@ -226,7 +226,7 @@ void eval(char *cmdline)
         {
             printf("background\n");
             addjob(jobs,pid,BG,cmdline);
-
+            jobf = getjobpid(jobs, pid);
             printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
         }
     }
@@ -346,7 +346,7 @@ void do_bgfg(char **argv)
             return;
         }
     }
-    else if (tempid[0] == "%") //check if job
+    else if (tempid[0] == '%') //check if job
     {
         temp = atoi(&tempid[1]);
         if(! (job=getjobjid(jobs, temp)))
