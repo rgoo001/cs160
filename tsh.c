@@ -239,9 +239,9 @@ void eval(char *cmdline)
                 {
                   //  printf("parent 240: %i\n", i++);
                         kill(pid, SIGKILL);
-                        printf("parent 244: %i\n", i++);
+                //        printf("parent 244: %i\n", i++);
                         deletejob(jobs, pid); 
-                        printf("parent 246: %i\n", i++);                 
+                  //      printf("parent 246: %i\n", i++);                 
                 }
                 //printf("parent 249: %i\n", i++);
              } 
