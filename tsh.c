@@ -180,6 +180,7 @@ void eval(char *cmdline)
     *       run exe file of child process(job)
     */
     char * argv[MAXARGS];
+    pid_t pid;
     int bgfg = parseline(cmdline,argv);
 
     //check for built in commands, return 0 (donothing) if not command.
@@ -199,7 +200,7 @@ void eval(char *cmdline)
             }
         } 
 
-
+        struct job_t *jobf;
 
         if (bgfg == 0)
         {
@@ -385,7 +386,7 @@ void sigint_handler(int sig)
     if (pid != 0)
     {
         //if job is found, kill process then delete
-        printf("killing job: [%d](%d)\n", jobf->jid, pid);
+        printf("killing job: [%d](%d)\n", jid, pid);
         kill(-pid, SIGINT);
         if (sig<0) deletejob(jobs,pid);
     }
@@ -411,7 +412,7 @@ void sigtstp_handler(int sig)
     if (pid != 0)
     {
         //kill process and change job status to "stopped"
-        printf("stopping job: [%d](%d)\n", jobf>jid, pid);
+        printf("stopping job: [%d](%d)\n", jid, pid);
         jobf->state=ST;
         kill(-pid, SIGTSTP);
 
