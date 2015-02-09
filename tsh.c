@@ -235,16 +235,16 @@ void eval(char *cmdline)
                 //delete job when done
                 jobf = getjobpid(jobs, pid);
                 printf("parent: %i\n", i++); //5
-                if (jobf == NULL)
+                if (jobf != NULL && jobf->state != ST)
                 {
                     printf("parent 240: %i\n", i++);
-                    if (jobf->state != ST)
-                    {
+                   // if (jobf->state != ST)
+                    //{
                         kill(pid, SIGKILL);
                         printf("parent 244: %i\n", i++);
                         deletejob(jobs, pid); 
                         printf("parent 246: %i\n", i++);                 
-                    }
+                    //}
                 }
                 printf("parent 249: %i\n", i++);
              } 
