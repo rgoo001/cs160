@@ -251,7 +251,7 @@ int builtin_cmd(char **argv)
 {
     printf("entering builtin_cmd");
 
-    if (argv[0] == "quit"||check == "jobs"||argv[0] == "bg"||argv[0] =="fg")
+    if (argv[0] == "quit"||argv[0] == "jobs"||argv[0] == "bg"||argv[0] =="fg")
     {
         printf("input: %s", argv[0]);
     }
