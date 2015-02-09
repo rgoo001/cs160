@@ -183,25 +183,25 @@ void eval(char *cmdline)
     char * argv[MAXARGS];
     pid_t pid;
     int bgfg = parseline(cmdline,argv);
-    int i=0;
-    int j = 0;
-    printf("parent: %i\n", i++); //0
+   // int i=0;
+    //int j = 0;
+   // printf("parent: %i\n", i++); //0
 
     //check for built in commands, return 0 (donothing) if not command. 
     if (!builtin_cmd(argv))
     {
-        printf("parent: %i\n", i++); //1
+     //   printf("parent: %i\n", i++); //1
 
         //fork and let child run job
         if ((pid = fork()) == 0)
         {
-            printf("child: %i\n", j++);
+       //     printf("child: %i\n", j++);
 
             setpgid(0,0); ///////////////////////////////////////////
-            printf("child: %i\n", j++);
+         //   printf("child: %i\n", j++);
             if (execvp(argv[0], argv) < 0)
             {
-                printf("child: %i\n", j++);
+           //     printf("child: %i\n", j++);
                 printf("Command not found: %s\n", argv[0]);
                 exit(0);
             }
@@ -212,17 +212,17 @@ void eval(char *cmdline)
         //parent waits for FG to end
         else
         {
-            printf("parent: %i\n", i++); //2
+            //printf("parent: %i\n", i++); //2
             if (!bgfg)
             {
-                printf("foreground job\n");
+              //  printf("foreground job\n");
                 addjob(jobs,pid,FG,cmdline);
-                printf("parent: %i\n", i++); //3
+                //printf("parent: %i\n", i++); //3
             }
             else
             {
-                printf("parent: %i\n", i++);
-                printf("background\n");
+                //printf("parent: %i\n", i++);
+                //printf("background\n");
                 addjob(jobs,pid,BG,cmdline);
             }
                 //have to wait for FG to terminate
@@ -230,26 +230,23 @@ void eval(char *cmdline)
              {
 
                 waitfg(pid);
-                printf("parent: %i\n", i++); //4
+                //printf("parent: %i\n", i++); //4
                 struct job_t *jobf;
                 //delete job when done
                 jobf = getjobpid(jobs, pid);
-                printf("parent: %i\n", i++); //5
+                //printf("parent: %i\n", i++); //5
                 if (jobf != NULL && jobf->state != ST)
                 {
-                    printf("parent 240: %i\n", i++);
-                   // if (jobf->state != ST)
-                    //{
+                  //  printf("parent 240: %i\n", i++);
                         kill(pid, SIGKILL);
                         printf("parent 244: %i\n", i++);
                         deletejob(jobs, pid); 
                         printf("parent 246: %i\n", i++);                 
-                    //}
                 }
-                printf("parent 249: %i\n", i++);
+                //printf("parent 249: %i\n", i++);
              } 
              else printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
-             printf("parent 252: %i\n", i++);
+            // printf("parent 252: %i\n", i++);
          } 
     }
 
