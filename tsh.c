@@ -183,11 +183,20 @@ void eval(char *cmdline)
     char * argv[MAXARGS];
     pid_t pid;
     int bgfg = parseline(cmdline,argv);
-
+    sigset_t mask;
     //check for built in commands, return 0 (donothing) if not command. 
     if (!builtin_cmd(argv))
     {
-
+                // Blocking SIGCHILD signals to avoid a race
+        if(sigemptyset(&mask) != 0){
+            unix_error("sigemptyset error");
+        }
+        if(sigaddset(&mask, SIGCHLD) != 0){
+            unix_error("sigaddset error");
+        }
+        if(sigprocmask(SIG_BLOCK, &mask, NULL) != 0){
+            unix_error("sigprocmask error");
+        }
 
         //fork and let child run job
         if ((pid = fork()) == 0)
@@ -209,14 +218,16 @@ void eval(char *cmdline)
             //printf("parent: %i\n", i++); //2
             if (!bgfg) addjob(jobs,pid,FG,cmdline);
             else addjob(jobs,pid,BG,cmdline);
-             
-                //have to wait for FG to terminate
+            
+
+            if(sigprocmask(SIG_UNBLOCK, &mask, NULL) !=0) unix_error("sigproc error"); 
+            //have to wait for FG to terminate
             if(!bgfg)
              {
 
                 waitfg(pid);
 
-                /*
+                
                 //printf("parent: %i\n", i++); //4
                 struct job_t *jobf;
                 //delete job when done
@@ -230,7 +241,7 @@ void eval(char *cmdline)
                         deletejob(jobs, pid); 
                   //      printf("parent 246: %i\n", i++);                 
                 }
-                //printf("parent 249: %i\n", i++);*/
+                //printf("parent 249: %i\n", i++);
              } 
              else printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
             // printf("parent 252: %i\n", i++);
