@@ -353,6 +353,12 @@ void do_bgfg(char **argv)
     char * tempid = argv[1];
     int temp;
 
+    if(id == NULL)
+    {
+        printf("%s command requires PID or %%jobid argument\n", argv[0])
+        return;
+    }
+
     if (isdigit(tempid[0])) //check if it is a process
     {
         pid_t pid = atoi(tempid);
@@ -374,7 +380,7 @@ void do_bgfg(char **argv)
     }
     else //invalid job or process entry
     {
-        printf("Invalid PID/jobid: %s\n", argv[0]);
+        printf("%s: argument must be a PID or %%jobid\n", argv[0]);
         return;
     }
     //check if bg/fg 
@@ -439,7 +445,7 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig) 
 {
-    printf("ctrl-C pressed. SIGINT activated\n");
+    //printf("ctrl-C pressed. SIGINT activated\n");
     //use fgpid to search for foregrund process
     //0 means no foreground, !0 means foreground process exists
 
@@ -453,7 +459,7 @@ void sigint_handler(int sig)
     if (pid != 0)
     {
         //if job is found, kill process then delete
-        printf("killing job: [%d](%d)\n", jid, pid);
+        printf("[%d](%d) Terminated by sig\n", jid, pid);
         kill(-pid, SIGINT);
         if (sig<0) deletejob(jobs,pid);
     }
@@ -468,7 +474,7 @@ void sigint_handler(int sig)
  */
 void sigtstp_handler(int sig) 
 {
-    printf("ctrl-Z pressed. SIGSTOP activated\n");
+  //  printf("ctrl-Z pressed. SIGSTOP activated\n");
     pid_t pid = fgpid(jobs);
     struct job_t *jobf;
     jobf = getjobpid(jobs,pid);
@@ -479,7 +485,7 @@ void sigtstp_handler(int sig)
     if (pid != 0)
     {
         //kill process and change job status to "stopped"
-        printf("stopping job: [%d](%d)\n", jid, pid);
+        printf("[%d](%d) stopped by signal\n", jid, pid);
         jobf->state=ST;
         kill(-pid, SIGTSTP);
 
