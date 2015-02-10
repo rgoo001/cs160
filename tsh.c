@@ -459,9 +459,13 @@ void sigint_handler(int sig)
     if (pid != 0)
     {
         //if job is found, kill process then delete
-        printf("[%d](%d) Terminated by sig\n", jid, pid);
+        
         kill(-pid, SIGINT);
-        if (sig<0) deletejob(jobs,pid);
+        if (sig<0)
+        {
+            printf("[%d](%d) Terminated by sig\n", jid, pid);
+            deletejob(jobs,pid);
+        } 
     }
 
     exit(0);
