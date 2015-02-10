@@ -392,22 +392,22 @@ void do_bgfg(char **argv)
     //check if bg/fg 
     //set state otherwise print error
 
+
+    kill(-(job->pid), SIGCONT);
+
+
     if(!strcmp(argv[0], "bg"))
     {
         printf("[%d] (%d) %s", job->jid, job->pid, job->cmdline);
-        kill(job->pid, SIGCONT);
+       // kill(job->pid, SIGCONT);
         job->state=BG;
     }
     else if (!strcmp(argv[0], "fg"))
     {
         if(job != NULL)
         {
+            job->state = FG;
             waitfg(job->pid);
-            /*
-            kill(job->pid, SIGCONT);
-            if (job->state != ST)
-                deletejob(jobs, job->pid);
-        }*/
         }
     }
 
