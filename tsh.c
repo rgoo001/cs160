@@ -403,9 +403,11 @@ void do_bgfg(char **argv)
         if(job != NULL)
         {
             waitfg(job->pid);
+            /*
             kill(job->pid, SIGCONT);
             if (job->state != ST)
                 deletejob(jobs, job->pid);
+        }*/
         }
     }
 
