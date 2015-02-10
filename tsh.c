@@ -208,7 +208,7 @@ void eval(char *cmdline)
                 printf("Command not found: %s\n", argv[0]);
                 exit(0);
             }*/
-                            if (sigprocmask(SIG_UNBLOCK, &mask, NULL) != 0){
+            if (sigprocmask(SIG_UNBLOCK, &mask, NULL) != 0){
                 unix_error("sigprocmask error");
             }
             if(setpgid(0, 0) < 0) {
@@ -239,7 +239,7 @@ void eval(char *cmdline)
              {
 
                 waitfg(pid);
-/*
+
 
                 struct job_t *jobf;
                 //delete job when done
@@ -249,7 +249,7 @@ void eval(char *cmdline)
                         kill(pid, SIGKILL);
                         deletejob(jobs, pid);               
                 }
-                */
+                
              } 
              else printf("[%d] (%d) %s\n", pid2jid(pid), pid, cmdline);
          } 
