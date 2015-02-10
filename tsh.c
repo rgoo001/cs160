@@ -179,7 +179,68 @@ void eval(char *cmdline)
     *       argv == path of exe file
     *       run exe file of child process(job)
     */
-
+    char *argv[MAXARGS];    // Argument List
+    int bg;         // bg/fg decider
+    pid_t pid;      // process id
+    sigset_t mask;      // for blocking signals
+    
+    // parse the line, then determine if it is a builtin
+    bg = parseline(cmdline, argv);
+    if(!builtin_cmd(argv)) { 
+        
+        // Blocking SIGCHILD signals to avoid a race
+        if(sigemptyset(&mask) != 0){
+            unix_error("sigemptyset error");
+        }
+        if(sigaddset(&mask, SIGCHLD) != 0){
+            unix_error("sigaddset error");
+        }
+        if(sigprocmask(SIG_BLOCK, &mask, NULL) != 0){
+            unix_error("sigprocmask error");
+        }
+        
+        // Forking
+        if((pid = fork()) < 0){
+            unix_error("forking error");
+        }
+        // Child- unblock mask, set new process group, run command 
+        else if(pid == 0) {
+            if (sigprocmask(SIG_UNBLOCK, &mask, NULL) != 0){
+                unix_error("sigprocmask error");
+            }
+            if(setpgid(0, 0) < 0) {
+                unix_error("setpgid error");
+            }
+            
+            if(execvp(argv[0], argv) < 0) {
+                printf("%s: Command not found\n", argv[0]);
+                exit(1);
+            }
+        } 
+        // Parent- add job to list, unblock signal, then do job
+        else {
+            if(!bg){
+                addjob(jobs, pid, FG, cmdline);
+            }
+            else {
+                addjob(jobs, pid, BG, cmdline);
+            }
+            if (sigprocmask(SIG_UNBLOCK, &mask, NULL) != 0){
+                unix_error("sigprocmask error");
+            }
+            
+            // Testing for a fg job
+            if (!bg){
+                waitfg(pid);
+            } 
+            else {
+                printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline);
+            }
+        }
+    }
+    
+/////////////////////////////////////////////////////////////////
+    /*
     char * argv[MAXARGS];
     pid_t pid;
     int bgfg = parseline(cmdline,argv);
@@ -249,6 +310,7 @@ void eval(char *cmdline)
             // printf("parent 252: %i\n", i++);
          } 
     }
+*/
 
 }
 
@@ -349,7 +411,7 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv) 
 {
-    /*
+    
     struct job_t *job;
     char * tempid = argv[1];
     int temp;
@@ -403,63 +465,7 @@ void do_bgfg(char **argv)
                 deletejob(jobs, job->pid);
         }
     }
-    */
-    ///////////////////////////////////////////////////////////////////
-// The id may be a PID or a JID
-    struct job_t *job;
-    char *id = argv[1];
-    int jid;    
-    
-    // If id does not exist
-    if(id == NULL) {
-        printf("%s command requires PID or %%jobid argument\n", argv[0]);
-        return;
-    }
-    
-    // For a JID
-    if(id[0] == '%') {  
-        jid= atoi(&id[1]);  
-        if(!(job= getjobjid(jobs, jid))) {  
-            printf("%s: No such job\n", id);  
-            return;  
-        }  
-    } 
-    // For a PID
-    else if(isdigit(id[0])) { 
-        pid_t pid= atoi(id);  
-        
-        if(!(job= getjobpid(jobs, pid))) {  
-            printf("(%d): No such process\n", pid);  
-            return;  
-        }  
-        
-    }  
-    
-    else {
-        printf("%s: argument must be a PID or %%jobid\n", argv[0]);
-        return;
-    }
-    
-    // Continue
-    if(kill(-(job->pid), SIGCONT) < 0) {
-        if(errno != ESRCH){
-            unix_error("kill error");
-        }
-    }
-    
-    // To determine the bg and fg
-    if(!strcmp("fg", argv[0])) {
-        job->state = FG;
-        waitfg(job->pid);
-    } 
-    else if(!strcmp("bg", argv[0])) {
-        printf("[%d] (%d) %s", job->jid, job->pid, job->cmdline);
-        job->state = BG;
-    } 
-    else {
-        printf("bg/fg error: %s\n", argv[0]);
-    }
-    //////////////////////////////////////////////////////////////////
+
 }
 
 /* 
