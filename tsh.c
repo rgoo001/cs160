@@ -355,7 +355,7 @@ void do_bgfg(char **argv)
 
     if(tempid == NULL)
     {
-        printf("%s command requires PID or %%jobid argument\n", argv[0])
+        printf("%s command requires PID or %%jobid argument\n", argv[0]);
         return;
     }
 
